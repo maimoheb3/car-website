@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MIU Auto Hub - Contact Us</title>
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+
+    <!-- Contact Hero Section -->
+    <section class="contact-hero">
+      <div class="container">
+        <h1 class="display-4 mb-4">Get in Touch</h1>
+        <p class="lead">
+          Ready to find your perfect vehicle? Contact us today and let our
+          expert team assist you.
+        </p>
+      </div>
+    </section>
+
+    <!-- Contact Information Section -->
+    <section class="py-5">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="contact-info-card">
+              <i class="fas fa-map-marker-alt"></i>
+              <h4>Visit Our Showroom</h4>
+              <p>123 Auto Drive<br />Motor City, MC 12345<br />United States</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="contact-info-card">
+              <i class="fas fa-phone"></i>
+              <h4>Call Us</h4>
+              <p>Sales: +1 (555) 123-4567<br />Service: +1 (555) 987-6543</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="contact-info-card">
+              <i class="fas fa-envelope"></i>
+              <h4>Email Us</h4>
+              <p>sales@MIU Auto Hub.com<br />service@MIU Auto Hub.com</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section class="py-5">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="contact-form">
+              <h3>Schedule a Visit</h3>
+              <form id="contactForm">
+                <div class="row">
+                  <div class="col-md-6">
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="name"
+                      placeholder="Your Name"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <input
+                      type="email"
+                      class="form-control"
+                      name="email"
+                      placeholder="Your Email"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <input
+                      type="tel"
+                      class="form-control"
+                      name="phone"
+                      placeholder="Your Phone"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <select class="form-select" name="interest" required>
+                      <option value="">I'm interested in...</option>
+                      <option value="new-cars">New Cars</option>
+                      <option value="used-cars">Used Cars</option>
+                      <option value="service">Service & Maintenance</option>
+                      <option value="financing">Financing Options</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                </div>
+                <textarea
+                  class="form-control mt-3"
+                  name="message"
+                  rows="5"
+                  placeholder="Tell us about your requirements"
+                  required
+                ></textarea>
+                <div id="formMessage" class="alert d-none mb-3"></div>
+                <button type="submit" class="btn btn-submit">
+                  <span class="button-text">Schedule Visit</span>
+                  <span
+                    class="spinner-border spinner-border-sm d-none"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                </button>
+              </form>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="map-container">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387193.30591910525!2d-74.25986432970718!3d40.697149422113014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2s!4v1647043087964!5m2!1sen!2s"
+                width="100%"
+                height="100%"
+                style="border: 0"
+                allowfullscreen=""
+                loading="lazy"
+              >
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Business Hours Section -->
+    <section class="py-5">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <div class="business-hours">
+              <h3>Business Hours</h3>
+              <div class="row">
+                <div class="col-md-6">
+                  <h5>Sales Department</h5>
+                  <p>
+                    Monday - Friday: 9:00 AM - 8:00 PM<br />
+                    Saturday: 10:00 AM - 6:00 PM<br />
+                    Sunday: 11:00 AM - 5:00 PM
+                  </p>
+                </div>
+                <div class="col-md-6">
+                  <h5>Service Department</h5>
+                  <p>
+                    Monday - Friday: 7:30 AM - 6:00 PM<br />
+                    Saturday: 8:00 AM - 4:00 PM<br />
+                    Sunday: Closed
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social Media Section -->
+    <section class="py-5">
+      <div class="container">
+        <div class="text-center">
+          <h3 class="mb-4">Follow Us</h3>
+          <div class="social-links">
+            <a href="#" style="text-decoration: none"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a href="#" style="text-decoration: none"
+              ><i class="fab fa-twitter"></i
+            ></a>
+            <a href="#" style="text-decoration: none"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a href="#" style="text-decoration: none"
+              ><i class="fab fa-linkedin-in"></i
+            ></a>
+            <a href="#" style="text-decoration: none"
+              ><i class="fab fa-youtube"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <%- include('partials/footer') %> <%- include('partials/auth-modals') %>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

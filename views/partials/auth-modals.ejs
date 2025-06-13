@@ -1,0 +1,236 @@
+<!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-car me-2"></i>Welcome Back
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail">Email address</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-envelope"></i>
+              </span>
+              <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-lock"></i>
+              </span>
+              <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-login">
+            <i class="fas fa-sign-in-alt me-2"></i>Login
+          </button>
+        </form>
+        <div class="auth-divider">
+          <span>or</span>
+        </div>
+        <div class="social-login">
+          <button class="btn btn-social btn-google">
+            <i class="fab fa-google me-2"></i>Continue with Google
+          </button>
+          <button class="btn btn-social btn-facebook">
+            <i class="fab fa-facebook-f me-2"></i>Continue with Facebook
+          </button>
+        </div>
+        <div class="auth-footer">
+          <p>
+            New to MIU Auto Hub?
+            <a href="#" data-bs-toggle="modal" data-bs-target="#signupModal" data-bs-dismiss="modal">
+              Create an Account
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Signup Modal -->
+<div class="modal fade" id="signupModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-car me-2"></i>Join MIU Auto Hub        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="signupForm">
+          <div class="form-group">
+            <label for="signupName">Full Name</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-user"></i>
+              </span>
+              <input type="text" class="form-control" id="signupName" placeholder="Enter your full name" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signupEmail">Email address</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-envelope"></i>
+              </span>
+              <input type="email" class="form-control" id="signupEmail" placeholder="Enter your email" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signupPhone">Phone Number</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-phone"></i>
+              </span>
+              <input type="tel" class="form-control" id="signupPhone" placeholder="Enter your phone number" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signupPassword">Password</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-lock"></i>
+              </span>
+              <input type="password" class="form-control" id="signupPassword" placeholder="Create a password" required />
+            </div>
+            <small class="form-text">Password must be 6-18 characters long</small>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-lock"></i>
+              </span>
+              <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-signup">
+            <i class="fas fa-user-plus me-2"></i>Create Account
+          </button>
+        </form>
+        <div class="auth-divider">
+          <span>or</span>
+        </div>
+        <div class="social-login">
+          <button class="btn btn-social btn-google">
+            <i class="fab fa-google me-2"></i>Continue with Google
+          </button>
+          <button class="btn btn-social btn-facebook">
+            <i class="fab fa-facebook-f me-2"></i>Continue with Facebook
+          </button>
+        </div>
+        <div class="auth-footer">
+          <p>
+            Already have an account?
+            <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">
+              Login
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("loginForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    try {
+      const response = await fetch("/api/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        window.location.href = `/${data.role}`;
+      } else {
+        showToast({ text: data.errors, type: 'error' });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      showToast({ text: "An error occurred. Please try again later.", type: 'error' });
+    }
+  });
+
+  document.getElementById("signupForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const name = document.getElementById("signupName").value;
+    const email = document.getElementById("signupEmail").value;
+    const phone = document.getElementById("signupPhone").value;
+    const password = document.getElementById("signupPassword").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    // Validate name
+    if (name.trim().length < 2) {
+      showToast({ text: "Name must be at least 2 characters long", type: 'error' });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showToast({ text: "Please enter a valid email address", type: 'error' });
+      return;
+    }
+
+    // Validate phone number
+    const phoneRegex = /^\+?[\d\s-]{10,}$/;
+    if (!phoneRegex.test(phone)) {
+      showToast({ text: "Please enter a valid phone number", type: 'error' });
+      return;
+    }
+
+    // Validate password
+    if (password.length < 6 || password.length > 18) {
+      showToast({ text: "Password must be between 6 and 18 characters long", type: 'error' });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      showToast({ text: "Passwords do not match", type: 'error' });
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/user/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, phone, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast({ text: "Account created successfully! Please login.", type: 'success' });
+        const signupModal = bootstrap.Modal.getInstance(document.getElementById("signupModal"));
+        signupModal.hide();
+        const loginModal = new bootstrap.Modal(document.getElementById("loginModal"));
+        loginModal.show();
+      } else {
+        showToast({ text: data.errors, type: 'error' });
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      showToast({ text: "An error occurred. Please try again later.", type: 'error' });
+    }
+  });
+</script>

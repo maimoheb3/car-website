@@ -1,0 +1,281 @@
+<nav class="navbar navbar-expand-lg fixed-top">
+  <div class="container">
+    <!-- Brand -->
+    <a class="navbar-brand d-flex align-items-center" href="/">
+      <div class="brand-icon me-2">
+        <i class="fas fa-car"></i>
+      </div>
+      <span class="brand-text">MIU Auto Hub</span>
+    </a>
+
+    <!-- Mobile Toggle -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Main Navigation -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/">
+            <i class="fas fa-compass me-1"></i>
+            <span>Explore</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/about-us">
+            <i class="fas fa-info-circle me-1"></i>
+            <span>About Us</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/contact-us">
+            <i class="fas fa-envelope me-1"></i>
+            <span>Contact Us</span>
+          </a>
+        </li>
+
+        <% if (user) { %>
+          <!-- Cart Button -->
+          <li class="nav-item">
+            <button class="btn btn-cart" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-count"><%= user.cart.items.length %></span>
+            </button>
+          </li>
+
+          <!-- Profile Dropdown -->
+          <li class="nav-item dropdown">
+            <button class="btn btn-profile" type="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user"></i>
+              <span class="profile-name"><%= user.name || 'Profile' %></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="/profile">
+                  <i class="fas fa-user-circle me-2"></i>My Profile
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item" href="/api/user/logout">
+                  <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a>
+              </li>
+            </ul>
+          </li>
+        <% } else { %>
+          <!-- Auth Buttons -->
+          <li class="nav-item">
+            <button class="btn btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">
+              <i class="fas fa-sign-in-alt me-1"></i>Login
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal" style="white-space: nowrap;">
+              <i class="fas fa-user-plus me-1"></i>Sign Up
+            </button>
+          </li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Cart Panel -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">
+      <i class="fas fa-shopping-cart me-2"></i>Your Cart
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+
+  <div class="offcanvas-body">
+    <% if (user && user.cart && user.cart.items.length > 0) { %>
+      <% let total = 0; %>
+      <% user.cart.items.forEach(item => { 
+        const car = item.car;
+        const subtotal = car.price * item.quantity;
+        total += subtotal;
+      %>
+        <div class="cart-item" data-car-id="<%= car._id %>">
+          <div class="cart-item-image">
+            <img src="<%= car.image %>" alt="<%= car.make %> <%= car.model %>">
+          </div>
+          <div class="cart-item-details">
+            <h6><%= car.make %> <%= car.model %></h6>
+            <div class="quantity-controls">
+              <button class="btn-quantity btn-decrease" data-car-id="<%= car._id %>" data-action="minus">-</button>
+              <span class="quantity"><%= item.quantity %></span>
+              <button class="btn-quantity btn-increase" data-car-id="<%= car._id %>" data-action="plus">+</button>
+            </div>
+          </div>
+          <div class="cart-item-price">
+            <span>$<%= subtotal.toFixed(2) %></span>
+          </div>
+        </div>
+      <% }); %>
+
+      <div class="cart-summary">
+        <div class="cart-total">
+          <span>Total:</span>
+          <span class="total-amount">$<%= total.toFixed(2) %></span>
+        </div>
+        <button class="btn btn-checkout" id="checkout">
+          <i class="fas fa-credit-card me-2"></i>Checkout
+        </button>
+      </div>
+    <% } else { %>
+      <div class="empty-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <p class="text-light">Your cart is empty</p>
+        <button class="btn btn-explore" onclick="startShopping()">
+          <i class="fas fa-compass me-2"></i>Start Shopping
+        </button>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- Checkout Success Modal -->
+<div class="modal fade" id="checkoutSuccessModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-body text-center p-4">
+        <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+        <h4 class="mb-3">Order Placed Successfully!</h4>
+        <p class="mb-4">Your order has been confirmed. You will be redirected to your profile page to view your order details.</p>
+        <div class="spinner-border text-success mb-3" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.btn-increase, .btn-decrease').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      const btn = event.currentTarget;
+      const carId = btn.getAttribute('data-car-id');
+      const action = btn.getAttribute('data-action');
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`/api/user/cart/${carId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ btn_type: action })
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          showToast({ text: data.error, type: 'error' });
+          return;
+        }
+
+        const updatedCart = data.cart;
+        const updatedItem = updatedCart.items.find(item => 
+          item.car._id === carId || item.car === carId
+        );
+
+        const cartItemElem = document.querySelector(
+          `.cart-item[data-car-id="${carId}"]`
+        );
+
+        if (updatedItem) {
+          cartItemElem.querySelector('.quantity').textContent = updatedItem.quantity;
+          cartItemElem.querySelector('.cart-item-price span').textContent = 
+            `$${updatedItem.price.toFixed(2)}`;
+        } else {
+          cartItemElem.remove();
+        }
+
+        document.querySelector('.total-amount').textContent = 
+          `$${updatedCart.totalPrice.toFixed(2)}`;
+
+        if (updatedCart.items.length === 0) {
+          document.querySelector('.offcanvas-body').innerHTML = `
+            <div class="empty-cart">
+              <i class="fas fa-shopping-cart"></i>
+              <p>Your cart is empty</p>
+              <button class="btn btn-explore" onclick="startShopping()">
+                <i class="fas fa-compass me-2"></i>Start Shopping
+              </button>
+            </div>
+          `;
+        }
+
+        showToast({ text: data.message, type: 'success' });
+      } catch (error) {
+        console.error('Fetch error:', error);
+        showToast({
+          text: 'An error occurred while updating the cart.',
+          type: 'error'
+        });
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  });
+
+  // Add checkout functionality
+  document.getElementById('checkout')?.addEventListener('click', async function() {
+    const button = this;
+    const originalHTML = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+
+    try {
+      const response = await fetch('/api/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Close the cart panel
+        const offcanvas = document.getElementById('offcanvasRight');
+        const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
+        bsOffcanvas.hide();
+
+        // Show success modal
+        const successModal = new bootstrap.Modal(document.getElementById('checkoutSuccessModal'));
+        successModal.show();
+
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          window.location.href = '/profile';
+        }, 2000);
+      } else {
+        throw new Error(data.message || 'Failed to create order');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      showToast({ text: error.message || 'Failed to process checkout', type: 'error' });
+      button.innerHTML = originalHTML;
+      button.disabled = false;
+    }
+  });
+
+  // Add start shopping functionality
+  function startShopping() {
+    // Close the cart panel
+    const offcanvas = document.getElementById('offcanvasRight');
+    const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
+    bsOffcanvas.hide();
+
+    // Scroll to featured cars section
+    document.getElementById('featured-cars').scrollIntoView({
+      behavior: 'smooth'
+    });
+  }
+</script>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MIU Auto Hub - Premium Automotive Experience</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+
+    <!-- Hero Section -->
+    <section
+      class="hero"
+      style="
+        background-image: url('/img/hero-bg.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      "
+    >
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-8" data-aos="fade-right">
+            <h1>Experience Automotive Excellence</h1>
+            <p class="lead mb-4 text-light">
+              Discover a world of premium vehicles where luxury meets
+              performance. Your journey to automotive perfection starts here.
+            </p>
+            <div class="d-flex gap-3">
+              <a href="#featured-cars" class="cta-button">
+                <i class="fas fa-car me-2"></i>Explore Collection
+              </a>
+              <a
+                href="#virtual-tour"
+                class="cta-button"
+                style="background: transparent"
+              >
+                <i class="fas fa-vr-cardboard me-2"></i>Virtual Tour
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-indicator" onclick="scrollToCars()">
+        <i class="fas fa-chevron-down fa-2x"></i>
+      </div>
+    </section>
+
+    <!-- Featured Cars Section -->
+    <section class="featured-cars py-5" id="featured-cars">
+      <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Premium Collection</h2>
+
+        <!-- Filter Toggle Button -->
+        <div class="filter-toggle-container mb-3" data-aos="fade-up">
+          <button class="btn btn-outline-danger" id="filterToggleBtn">
+            <i class="fas fa-filter me-2"></i>Show Filters
+          </button>
+        </div>
+
+        <!-- Side Filter Panel -->
+        <div class="side-filter-panel" id="sideFilterPanel">
+          <div class="side-filter-header">
+            <h5 class="mb-0">Filters</h5>
+            <button
+              class="btn-close btn-close-white"
+              id="closeFilterBtn"
+            ></button>
+          </div>
+
+          <div class="side-filter-content">
+            <div class="filter-section">
+              <label class="filter-label">Search</label>
+              <div class="input-group">
+                <span class="input-group-text bg-dark text-light">
+                  <i class="fas fa-search"></i>
+                </span>
+                <input
+                  type="text"
+                  class="form-control bg-dark text-light"
+                  id="searchInput"
+                  placeholder="Search..."
+                />
+              </div>
+            </div>
+
+            <div class="filter-section">
+              <label class="filter-label">Make</label>
+              <select class="form-select bg-dark text-light" id="makeFilter">
+                <option value="all">All Makes</option>
+                <% const uniqueMakes = [...new Set(cars.map(car => car.make))].sort(); %>
+                <% uniqueMakes.forEach(make => { %>
+                <option value="<%= make %>"><%= make %></option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div class="filter-section">
+              <label class="filter-label">Category</label>
+              <select
+                class="form-select bg-dark text-light"
+                id="categoryFilter"
+              >
+                <option value="all">All Categories</option>
+                <option value="Sedan">Sedan</option>
+                <option value="SUV">SUV</option>
+                <option value="Truck">Truck</option>
+                <option value="Convertible">Convertible</option>
+                <option value="Coupe">Coupe</option>
+                <option value="Hatchback">Hatchback</option>
+                <option value="Electric">Electric</option>
+                <option value="Hybrid">Hybrid</option>
+              </select>
+            </div>
+
+            <div class="filter-section">
+              <label class="filter-label">Price Range</label>
+              <select class="form-select bg-dark text-light" id="priceFilter">
+                <option value="all">All Prices</option>
+                <option value="0-25000">$0 - $25k</option>
+                <option value="25000-50000">$25k - $50k</option>
+                <option value="50000-100000">$50k - $100k</option>
+                <option value="100000+">$100k+</option>
+              </select>
+            </div>
+
+            <div class="filter-section">
+              <label class="filter-label">View Style</label>
+              <div class="btn-group w-100" role="group">
+                <button
+                  type="button"
+                  class="btn btn-outline-danger active"
+                  id="cardViewBtn"
+                  title="Card View"
+                >
+                  <i class="fas fa-th-large"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-danger"
+                  id="tileViewBtn"
+                  title="Tile View"
+                >
+                  <i class="fas fa-list"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="filter-section">
+              <button class="btn btn-danger w-100" id="clearFiltersBtn">
+                <i class="fas fa-times me-2"></i>Clear Filters
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overlay -->
+        <div class="filter-overlay" id="filterOverlay"></div>
+
+        <!-- Cars Grid -->
+        <div class="row" id="carsGrid">
+          <% cars.forEach(car => { %>
+          <div
+            class="col-lg-3 col-md-4 col-sm-6 mb-4 car-item"
+            data-aos="fade-up"
+          >
+            <div
+              class="car-card"
+              data-category="<%= car.category.toLowerCase() %>"
+              data-make="<%= car.make.toLowerCase() %>"
+              data-model="<%= car.model.toLowerCase() %>"
+              data-price="<%= car.price %>"
+              data-stock="<%= car.stock %>"
+              data-description="<%= car.description?.toLowerCase() || '' %>"
+            >
+              <span class="category-label"><%= car.category %></span>
+              <div class="car-image">
+                <img
+                  src="<%= car.image %>"
+                  alt="<%= car.make %> <%= car.model %>"
+                  class="img-fluid"
+                />
+              </div>
+              <div class="card-body p-4">
+                <h5 class="text-light mb-3">
+                  <%= car.make %> <%= car.model %>
+                </h5>
+                <p class="stock text-muted mb-2">
+                  <i class="fas fa-check-circle me-2"></i>In Stock: <%=
+                  car.stock %>
+                </p>
+                <p class="price h4 text-danger mb-3">
+                  $<%= car.price.toLocaleString() %>
+                </p>
+                <div class="d-flex gap-2">
+                  <button
+                    class="btn btn-danger flex-grow-1"
+                    onclick="openCarModal('<%= car.make %>', '<%= car.model %>', '<%= car.category %>', '<%= car.price %>', '<%= car.image %>', '<%= car._id %>', '<%= car.stock %>', '<%= car.description.replace(/'/g, "\\'") %>')"
+                  >
+                    <i class="fas fa-eye me-1"></i>View Details
+                  </button>
+                  <% if (user) { %>
+                  <button
+                    class="btn btn-danger"
+                    onclick="addToCart('<%= car._id %>', '<%= car.make %> <%= car.model %>', '<%= car.stock %>')"
+                    title="Add to Cart"
+                  >
+                    <i class="fas fa-shopping-cart"></i>
+                  </button>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Cars Page Navigation" class="mt-5">
+          <ul class="pagination justify-content-center">
+            <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+              <a
+                class="page-link bg-dark text-light border-danger"
+                href="/?page=<%= i %>"
+                ><%= i %></a
+              >
+            </li>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Virtual Tour Section -->
+    <section class="virtual-tour py-5" id="virtual-tour">
+      <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Virtual Showroom Tour</h2>
+        <div class="row align-items-center">
+          <div class="col-lg-6" data-aos="fade-right">
+            <div class="ratio ratio-16x9">
+              <iframe
+                src="https://www.youtube.com/embed/dummy"
+                title="Virtual Tour"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </div>
+          <div class="col-lg-6" data-aos="fade-left">
+            <h3 class="mb-4">Experience Our Showroom Virtually</h3>
+            <p class="lead mb-4">
+              Take a 360° tour of our state-of-the-art showroom and explore our
+              premium collection from the comfort of your home.
+            </p>
+            <div class="d-flex gap-3">
+              <button class="cta-button">
+                <i class="fas fa-vr-cardboard me-2"></i>Start Tour
+              </button>
+              <button class="cta-button" style="background: transparent">
+                <i class="fas fa-calendar me-2"></i>Book Appointment
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features py-5">
+      <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Why Choose Us</h2>
+        <div class="row g-4">
+          <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="feature-card text-center p-4">
+              <i class="fas fa-shield-alt fa-3x text-danger mb-3"></i>
+              <h4>Premium Quality</h4>
+              <p>
+                Every vehicle undergoes rigorous quality checks to ensure the
+                highest standards.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="feature-card text-center p-4">
+              <i class="fas fa-tools fa-3x text-danger mb-3"></i>
+              <h4>Expert Service</h4>
+              <p>
+                Our certified technicians provide top-notch maintenance and
+                repair services.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="feature-card text-center p-4">
+              <i class="fas fa-handshake fa-3x text-danger mb-3"></i>
+              <h4>Best Deals</h4>
+              <p>
+                Competitive pricing and flexible financing options for every
+                budget.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Car Modal -->
+    <div class="modal fade" id="carModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light">
+          <div class="modal-header border-danger">
+            <h5 class="modal-title" id="modalCarTitle">Car Details</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-4">
+                <img
+                  id="modalCarImage"
+                  src=""
+                  alt="Car Image"
+                  class="img-fluid rounded"
+                />
+              </div>
+              <div class="col-md-8">
+                <div class="car-info">
+                  <h3 id="modalTitle" class="text-danger"></h3>
+                  <p id="modalCategory" class="badge bg-danger"></p>
+                  <p id="modalPrice" class="h4 text-danger"></p>
+                  <p id="modalStock" class="text-muted"></p>
+                  <p id="modalDescription" class="mt-3"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include('partials/footer') %> <%- include('partials/auth-modals') %>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Custom Scripts -->
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 1000,
+        once: true,
+      });
+
+      // Wait for the DOM to be fully loaded
+      window.addEventListener("load", function () {
+        // Get all required elements
+        const searchInput = document.getElementById("searchInput");
+        const makeFilter = document.getElementById("makeFilter");
+        const categoryFilter = document.getElementById("categoryFilter");
+        const priceFilter = document.getElementById("priceFilter");
+        const carsGrid = document.getElementById("carsGrid");
+        const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+        const cardViewBtn = document.getElementById("cardViewBtn");
+        const tileViewBtn = document.getElementById("tileViewBtn");
+        const filterToggleBtn = document.getElementById("filterToggleBtn");
+        const sideFilterPanel = document.getElementById("sideFilterPanel");
+        const closeFilterBtn = document.getElementById("closeFilterBtn");
+        const filterOverlay = document.getElementById("filterOverlay");
+
+        // Only proceed if we have all required elements
+        if (
+          !searchInput ||
+          !makeFilter ||
+          !categoryFilter ||
+          !priceFilter ||
+          !carsGrid ||
+          !clearFiltersBtn ||
+          !cardViewBtn ||
+          !tileViewBtn ||
+          !filterToggleBtn ||
+          !sideFilterPanel ||
+          !closeFilterBtn ||
+          !filterOverlay
+        ) {
+          console.error(
+            "Some required elements were not found. Please check the page structure."
+          );
+          return;
+        }
+
+        function filterCars() {
+          const searchTerm = searchInput.value.toLowerCase().trim();
+          const selectedMake = makeFilter.value.toLowerCase();
+          const selectedCategory = categoryFilter.value.toLowerCase();
+          const selectedPriceRange = priceFilter.value;
+          const cars = document.querySelectorAll(".car-card");
+
+          let visibleCount = 0;
+
+          cars.forEach((car) => {
+            const make = car.dataset.make;
+            const model = car.dataset.model;
+            const category = car.dataset.category;
+            const price = parseFloat(car.dataset.price);
+            const description = car.dataset.description?.toLowerCase() || "";
+
+            // Search term matching
+            const matchesSearch =
+              searchTerm === "" ||
+              make.includes(searchTerm) ||
+              model.includes(searchTerm) ||
+              category.includes(searchTerm) ||
+              description.includes(searchTerm);
+
+            // Make filter
+            const matchesMake = selectedMake === "all" || make === selectedMake;
+
+            // Category filter
+            const matchesCategory =
+              selectedCategory === "all" || category === selectedCategory;
+
+            // Price range filter
+            let matchesPrice = true;
+            if (selectedPriceRange !== "all") {
+              const [min, max] = selectedPriceRange
+                .split("-")
+                .map((val) =>
+                  val === "+" ? Infinity : parseInt(val.replace(/[^0-9]/g, ""))
+                );
+              matchesPrice =
+                price >= min && (max === Infinity ? true : price <= max);
+            }
+
+            if (
+              matchesSearch &&
+              matchesMake &&
+              matchesCategory &&
+              matchesPrice
+            ) {
+              car.parentElement.style.display = "block";
+              visibleCount++;
+            } else {
+              car.parentElement.style.display = "none";
+            }
+          });
+
+          // Show "no results" message if needed
+          let noResultsMessage = document.getElementById("noResultsMessage");
+          if (visibleCount === 0) {
+            if (!noResultsMessage) {
+              noResultsMessage = document.createElement("div");
+              noResultsMessage.id = "noResultsMessage";
+              noResultsMessage.className = "text-center my-4";
+              noResultsMessage.innerHTML = `
+                <h4>No cars found</h4>
+                <p class="text-muted">Try adjusting your search or filter criteria</p>
+              `;
+              carsGrid.appendChild(noResultsMessage);
+            }
+          } else {
+            if (noResultsMessage) {
+              noResultsMessage.remove();
+            }
+          }
+        }
+
+        // Add event listeners
+        searchInput.addEventListener("input", filterCars);
+        makeFilter.addEventListener("change", filterCars);
+        categoryFilter.addEventListener("change", filterCars);
+        priceFilter.addEventListener("change", filterCars);
+
+        clearFiltersBtn.addEventListener("click", function () {
+          searchInput.value = "";
+          makeFilter.value = "all";
+          categoryFilter.value = "all";
+          priceFilter.value = "all";
+          filterCars();
+        });
+
+        // View toggle functionality
+        cardViewBtn.addEventListener("click", function () {
+          carsGrid.classList.remove("tile-view");
+          cardViewBtn.classList.add("active");
+          tileViewBtn.classList.remove("active");
+        });
+
+        tileViewBtn.addEventListener("click", function () {
+          carsGrid.classList.add("tile-view");
+          tileViewBtn.classList.add("active");
+          cardViewBtn.classList.remove("active");
+        });
+
+        // Filter toggle functionality
+        function toggleFilter() {
+          sideFilterPanel.classList.toggle("active");
+          filterOverlay.classList.toggle("active");
+          document.body.classList.toggle("filter-open");
+        }
+
+        filterToggleBtn.addEventListener("click", toggleFilter);
+        closeFilterBtn.addEventListener("click", toggleFilter);
+        filterOverlay.addEventListener("click", toggleFilter);
+
+        // Initial filter to ensure proper state
+        filterCars();
+      });
+
+      let currentPrice = 0;
+      let maxStock = 0;
+
+      // Smooth scroll function
+      function scrollToCars() {
+        document.getElementById("featured-cars").scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+
+      // Handle explore link click
+      document
+        .getElementById("exploreLink")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          scrollToCars();
+        });
+
+      // Category filtering
+      document.querySelectorAll(".dropdown-menu a").forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          const category = this.getAttribute("href").replace("#", "");
+          filterCars(category);
+          scrollToCars();
+        });
+      });
+
+      function filterCars(category) {
+        const cars = document.querySelectorAll(".car-card");
+        cars.forEach((car) => {
+          if (category === "all" || car.dataset.category === category) {
+            car.parentElement.style.display = "block";
+          } else {
+            car.parentElement.style.display = "none";
+          }
+        });
+      }
+
+      // Open car modal
+      function openCarModal(
+        make,
+        model,
+        category,
+        price,
+        image,
+        carId,
+        stock,
+        description
+      ) {
+        document.getElementById("modalTitle").textContent = `${make} ${model}`;
+        document.getElementById("modalCategory").textContent = category;
+        document.getElementById("modalPrice").textContent = `$${parseFloat(
+          price
+        ).toLocaleString()}`;
+        document.getElementById("modalCarImage").src = image;
+        document.getElementById(
+          "modalStock"
+        ).textContent = `In Stock: ${stock}`;
+        document.getElementById("modalDescription").textContent = description;
+
+        const modal = new bootstrap.Modal(document.getElementById("carModal"));
+        modal.show();
+      }
+
+      // Add to cart function
+      async function addToCart(carId, title, maxStock) {
+        if (!carId) {
+          alert("Car ID is missing.");
+          return;
+        }
+
+        try {
+          const res = await fetch("/api/user/cart", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({ carId, quantity: 1 }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            alert(`Added ${title} to cart!`);
+            window.location = "/";
+          } else {
+            alert("Error: " + data.error);
+          }
+        } catch (err) {
+          console.error("Cart error:", err);
+          alert("Something went wrong while adding to cart.");
+        }
+      }
+
+      // Newsletter subscription
+      function handleNewsletter(event) {
+        event.preventDefault();
+        const input = event.target.querySelector("input");
+        const button = event.target.querySelector("button");
+        const originalHTML = button.innerHTML;
+
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        button.disabled = true;
+
+        setTimeout(() => {
+          alert("Thank you for subscribing to our newsletter!");
+          input.value = "";
+          button.innerHTML = originalHTML;
+          button.disabled = false;
+        }, 2000);
+
+        return false;
+      }
+    </script>
+  </body>
+</html>
