@@ -60,7 +60,7 @@ const carSchema = new mongoose.Schema(
           "Hybrid",
         ],
         message:
-          "Category must be one of: Sedan, SUV, Truck, Convertible, Coupe, Hatchback, Electric, Hybrid",
+          "Category must be one of Sedan, SUV, Truck, Convertible, Coupe, Hatchback, Electric, Hybrid",
       },
       trim: true,
     },
